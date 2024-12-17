@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoGrid - Sistema de Documentação de Redes</title>
+    <style>
+        /* Estilo Global */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #00FF00;
+        }
+        header {
+            background-color: #000;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 0 5px #00FF00;
+        }
+        nav a {
+            color: #00FF00;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        /* Estilo das Abas */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background-color: #222;
+            border-bottom: 2px solid #00FF00;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            font-weight: bold;
+            background-color: #111;
+            flex-grow: 1;
+        }
+        .tab:hover {
+            background-color: #444;
+        }
+        .tab.active {
+            background-color: #00FF00;
+            color: #000;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        footer {
+            text-align: center;
+            margin: 20px 0;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <h1>GeoGrid - Sistema de Documentação de Redes</h1>
+    </header>
+
+    <!-- Abas de Navegação -->
+    <div class="tabs">
+        <div class="tab active" onclick="openTab('dispositivos')">Dispositivos</div>
+        <div class="tab" onclick="openTab('ferramentas')">Ferramentas</div>
+        <div class="tab" onclick="openTab('relatorios')">Relatórios</div>
+    </div>
+
+    <!-- Conteúdo das Abas -->
+    <div id="dispositivos" class="tab-content active">
+        <h2>Gerenciamento de Dispositivos</h2>
+        <label for="nome">Nome do Dispositivo</label>
+        <input type="text" id="nome" placeholder="Ex: Switch Core">
+
+        <label for="tipo">Tipo de Dispositivo</label>
+        <select id="tipo">
+            <option value="Switch">Switch</option>
+            <option value="Roteador">Roteador</option>
+            <option value="Servidor">Servidor</option>
+        </select>
+
+        <label for="ip">Endereço IP</label>
+        <input type="text" id="ip" placeholder="Ex: 192.168.0.1">
+
+        <button onclick="adicionarDispositivo()">ADICIONAR DISPOSITIVO</button>
+
+        <!-- Tabela para os dispositivos -->
+        <h3>Lista de Dispositivos</h3>
+        <div class="scrollable">
+            <table id="tabela-dispositivos">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Endereço IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados adicionados dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="ferramentas" class="tab-content">
+        <h2>Ferramentas Avançadas</h2>
+
+        <!-- Cálculo de Potência -->
+        <div>
+            <h3>Cálculo de Potência</h3>
+            <p>Simule perdas na fibra óptica para otimizar a sua rede.</p>
+            <input type="number" id="fibra" placeholder="Comprimento da fibra (km)">
+            <input type="number" id="perda" placeholder="Perda por km (dB/km)">
+            <button onclick="calcularPotencia()">CALCULAR</button>
+            <p id="resultado-potencia"></p>
+        </div>
+
+        <!-- Análise de Rompimento -->
+        <div>
+            <h3>Análise de Rompimento</h3>
+            <p>Detecte falhas e identifique pontos críticos da rede.</p>
+            <input type="number" id="comprimento" placeholder="Comprimento crítico (km)">
+            <input type="number" id="emenda" placeholder="Perda por emenda (dB)">
+            <button onclick="analisarRompimento()">ANALISAR</button>
+            <p id="resultado-rompimento"></p>
+        </div>
+    </div>
+
+    <div id="relatorios" class="tab-content">
+        <h2>Relatórios</h2>
+        <p>Veja abaixo os dispositivos cadastrados.</p>
+        <div class="scrollable">
+            <table id="relatorio-dispositivos">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Endereço IP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados dos dispositivos são carregados aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2024 GeoGrid. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function openTab(tabName) {
+            // Esconde todas as abas
+            let tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove a classe "active" das abas
+            let tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Exibe a aba clicada
+            document.getElementById(tabName).classList.add('active');
+            // Marca a aba clicada como ativa
+            event.target.classList.add('active');
+        }
+
+        function adicionarDispositivo() {
+            const nome = document.getElementById('nome').value;
+            const tipo = document.getElementById('tipo').value;
+            const ip = document.getElementById('ip').value;
+
+            if (nome && tipo && ip) {
+                const tabela = document.getElementById('tabela-dispositivos').querySelector('tbody');
+                const novaLinha = `<tr>
+                                    <td>${nome}</td>
+                                    <td>${tipo}</td>
+                                    <td>${ip}</td>
+                                  </tr>`;
+                tabela.insertAdjacentHTML('beforeend', novaLinha);
+            } else {
+                alert("Por favor, preencha todos os campos.");
+            }
+        }
+
+        function calcularPotencia() {
+            const fibra = document.getElementById('fibra').value;
+            const perda = document.getElementById('perda').value;
+
+            if (fibra && perda) {
+                const resultado = fibra * perda;
+                document.getElementById('resultado-potencia').innerText = `Perda total: ${resultado} dB`;
+            } else {
+                alert("Preencha os valores de fibra e perda.");
+            }
+        }
+
+        function analisarRompimento() {
+            const comprimento = document.getElementById('comprimento').value;
+            const emenda = document.getElementById('emenda').value;
+
+            if (comprimento && emenda) {
+                const resultado = comprimento * emenda;
+                document.getElementById('resultado-rompimento').innerText = `Perda crítica: ${resultado} dB`;
+            } else {
+                alert("Preencha os valores de comprimento e perda por emenda.");
+            }
+        }
+    </script>
+</body>
+</html>
